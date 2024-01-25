@@ -32,7 +32,7 @@ public class JwtGenerator : IJwtGenerator
             issuer: _issuer,
             audience: _audience,
             claims: claims,
-            expires: DateTime.UtcNow.Add(TimeSpan.FromHours(8)),
+            expires: DateTime.UtcNow.Add(TimeSpan.FromDays(1)),
             signingCredentials: new SigningCredentials(_key, SecurityAlgorithms.HmacSha256));
             
         return new JwtSecurityTokenHandler().WriteToken(jwt);

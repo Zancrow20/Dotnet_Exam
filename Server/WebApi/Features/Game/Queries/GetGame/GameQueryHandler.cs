@@ -24,6 +24,7 @@ public class GameQueryHandler : IRequestHandler<GameQuery, Result<GameDto, strin
         {
             GameId = game.GameId,
             Owner = game.Owner,
+            OwnerName = game.OwnerName,
             Date = game.Date,
             MaxRating = game.MaxRating,
             Status = game.Status

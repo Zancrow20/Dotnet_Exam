@@ -18,6 +18,7 @@ public class Game
 {
     public string? GameId { get; set; }
     public string? Owner { get; set; }
+    public string? OwnerName { get; set; }
     public string? PlayerOne { get; set; }
     public string? PlayerTwo { get; set; }
     public DateTime Date { get; set; }
