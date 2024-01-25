@@ -6,11 +6,16 @@ import { MainPage } from './Main/MainPage';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { PageBuilder } from './PageBuilder/PageBuilder';
 import { Rating } from './Rating/Rating';
+import { GamePage } from './GamePage/GamePage';
 
 function App() {
   return (
     <BrowserRouter>
         <Routes>
+          <Route
+            path="/game"
+            element={<PageBuilder component={<GamePage/>}/>}
+          />
           <Route
             path="/authorize"
             element={<PageBuilder component={<AuthorizationPage/>}/>}
@@ -23,10 +28,7 @@ function App() {
             path="*"
             element={<PageBuilder component={<MainPage/>}/>}
           />
-          <Route
-            path="/rating"
-            element={<PageBuilder component={<Rating/>}/>}
-          />
+          
         </Routes>
       </BrowserRouter>
   );

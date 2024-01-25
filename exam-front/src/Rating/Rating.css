@@ -1,12 +1,13 @@
 .rating{
     position: fixed;
     top: 140px;
-    background: #bce4e9e6;
-    border: 2px solid #5a8ec9;
+    background: white;
+    border: 2px solid #212169;
     border-radius: 12px;
     width: 700px;
     height: 400px;
     padding: 20px;
+    color: #212169;
 }
 .rating-block{
     max-width: 100%;

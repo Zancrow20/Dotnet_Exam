@@ -40,20 +40,20 @@ export const RegistrationForm = () => {
                 <form className="register-form" onSubmit={handleSubmitForm}>
                     <input
                         type="text"
-                        placeholder="User name"
+                        placeholder="Имя пользователя"
                         onChange={(e) => updateCredentials("username", e.target.value)}
                     />
                     <input
                         type="password"
-                        placeholder="Password"
+                        placeholder="Пароль"
                         onChange={(e) => updateCredentials("password", e.target.value)}
                     />
                     <input
                         type="password"
-                        placeholder="Repeat password"
+                        placeholder="Повторите пароль"
                         onChange={(e) => updateCredentials("confirmPassword", e.target.value)}
                     />
-                    <input type="submit" value="OK" />
+                    <input type="submit" value="Зарегестрироваться" />
                     <div>{error}</div>
                 </form> 
 

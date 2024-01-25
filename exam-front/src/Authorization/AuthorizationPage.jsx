@@ -4,7 +4,10 @@ export const AuthorizationPage = () => {
     return (
         <>
             <div className="auth-container">
-                <AuthorizationForm/>             
+                <AuthorizationForm/>
+                <div>
+                    Еще нет аккаунта? <a href="/register">Зарегестрируйся</a>
+                </div>             
             </div>
         </>
 

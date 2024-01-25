@@ -2,25 +2,41 @@
     display: flex;
     flex-direction: column;
 }
-
+.auth-container{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.auth-container a{
+    text-decoration: none;
+    color: #4B539A;
+    
+}
 .auth-form input[type="text"],.auth-form input[type="password"] {
-  background: rgba(232, 237, 235, 0.78);
-  width: 250px;
-  border: 2px solid #3581d7;
-  border-radius: 10px;
-  height: 27px;
-  margin: 10px 0;
-  font-size: 16px;
-  padding: 8px 15px;
+    background: rgba(232, 237, 235, 0.78);
+    width: 250px;
+    border: 2px solid #212169;
+    border-radius: 10px;
+    height: 27px;
+    margin: 10px 0;
+    font-size: 16px;
+    padding: 8px 15px;
+}
+
+.auth-form input[type="text"]::placeholder,.auth-form input[type="password"]::placeholder{
+    letter-spacing: 2px;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; 
+    font-size: 14px;
 }
 
 .auth-form input[type="submit"]{
-    background: #3581d7;
-    width: 60px;
-    border: 2px solid #1e4c81;
-    border-radius: 7px;
-    height: 27px;
+    background: #4B539A;
+    border: 2px solid #212169;
+    border-radius: 10px;
     margin: 10px auto;
     font-size: 16px;
-    padding: 1px 15px;
+    padding: 10px 20px;
+    letter-spacing: 2px;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; 
+    font-size: 14px;
   }

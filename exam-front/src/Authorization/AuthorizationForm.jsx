@@ -48,15 +48,15 @@ export const AuthorizationForm = () => {
                 <form className="auth-form" onSubmit={handleSubmitForm}>
                     <input
                         type="text"
-                        placeholder="User name"
+                        placeholder="Имя пользователя"
                         onChange={(e) => updateCredentials("username", e.target.value.trim())}
                     />
                     <input
                         type="password"
-                        placeholder="Password"
+                        placeholder="Пароль"
                         onChange={(e) => updateCredentials("password", e.target.value.trim())}
                     />
-                    <input type="submit" value="OK" />
+                    <input type="submit" value="Войти" />
                     <div>{error}</div>
                 </form>   
             </div>   
