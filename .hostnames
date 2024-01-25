@@ -1,0 +1,3 @@
+WebApiPortHttp=8000
+
+REACT_APP_WebApi=${WebApiPortHttp}
