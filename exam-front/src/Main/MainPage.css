@@ -1,0 +1,30 @@
+.active-btns{
+    display: flex;
+    justify-content: space-around;
+}
+.rating-btn{
+    background: #71cddb;
+    border: 2px solid #3581d7;
+    border-radius: 12px;
+    margin: 10px 0;
+    font-size: 16px;
+    padding: 8px 15px;
+
+}
+.create-game-btn{
+    background: #71cddb;
+    border: 2px solid #3581d7;
+    border-radius: 12px;
+    margin: 10px 0;
+    font-size: 16px;
+    padding: 8px 15px;
+}
+
+.game-block{
+    display: flex;
+    justify-content: space-around;
+    border: 2px solid #71cddb;
+    margin: 10px 0;
+    padding: 10px 10px;
+    border-radius: 12px;
+}

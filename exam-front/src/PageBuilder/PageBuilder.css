@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.content {
+    flex: 1 0 auto;
+}
+.main-page {
+    display: flex;
+    width: calc(100% - 60px);
+    padding: 0px 30px;
+    height: 100%;
+    flex-direction: column;
+    gap: 20px;
+  }
+.content-header{
+    height: 70px;
+}
+.content-footer{
+    height: 50px;
+}
+.footer {
+    flex: 0 0 auto;
+}

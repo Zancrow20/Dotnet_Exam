@@ -1,0 +1,47 @@
+.create-game{
+    position: fixed;
+    top: 140px;
+    background: #bce4e9e6;
+    border: 2px solid #5a8ec9;
+    border-radius: 12px;
+    width: 600px;
+    height: 300px;
+    padding: 20px;
+}
+.create-game-block{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.create-game-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+.create-game-form input[type="number"]{
+    background: rgba(232, 237, 235, 0.78);
+    width: 200px;
+    border: 2px solid #35b9d7;
+    border-radius: 10px;
+    height: 25px;
+    margin: 10px 0;
+    font-size: 16px;
+    padding: 8px 15px;
+}
+
+.create-game-form input[type="submit"]{
+    background: #35b9d7;
+    width: 150px;
+    border: 2px solid #35b9d7;
+    border-radius: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    padding: 8px 15px;
+}
+.error-message{
+    height: 20px;
+    color: red;
+}
