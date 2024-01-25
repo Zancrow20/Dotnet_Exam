@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getFetcher } from "../axios/AxiosInstance";
 import Ports from "../consts/Ports";
 
-const fetcher = getFetcher(Ports.ExamServer);
+const fetcher = getFetcher(Ports.WebApi);
 
 export const AuthorizationForm = () => {
     const navigate = useNavigate();

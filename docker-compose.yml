@@ -1,4 +1,4 @@
-﻿services:
+services:
   postgres-db:
     image: postgres:alpine
     container_name: postgres-db
@@ -25,7 +25,7 @@
     image: web-api
     container_name: web-api
     build:
-      context: .
+      context: ./Server
       dockerfile: /WebApi/Dockerfile
     ports:
       - "8000:8080"
@@ -39,9 +39,20 @@
       MongoDb__ConnectionString: mongodb://mongo-db:27017
       MongoDb__DatabaseName: RatingDb
       MondoDb__CollectionName: Rating
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-    
+        
+  exam-front:
+    image: exam-front
+    container_name: exam-front
+    build:
+      context: ./exam-front
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .hostnames
+    depends_on:
+      - web-api
+
 volumes:
   mongo_data:
   postgres_data:

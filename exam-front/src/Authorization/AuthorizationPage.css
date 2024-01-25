@@ -21,6 +21,8 @@
     margin: 10px 0;
     font-size: 16px;
     padding: 8px 15px;
+    letter-spacing: 2px;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .auth-form input[type="text"]::placeholder,.auth-form input[type="password"]::placeholder{
