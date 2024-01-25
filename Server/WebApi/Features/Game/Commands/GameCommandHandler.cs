@@ -33,6 +33,7 @@ public class GameCommandHandler : IRequestHandler<GameCommand, Result<GameDto, s
             GameId = gameId,
             MaxRating = request.MaxRating,
             Owner = owner.Id,
+            OwnerName = owner.UserName,
             Status = Status.New
         };
 
@@ -45,6 +46,7 @@ public class GameCommandHandler : IRequestHandler<GameCommand, Result<GameDto, s
             Date = game.Date,
             MaxRating = request.MaxRating,
             Owner = owner.Id,
+            OwnerName = owner.UserName,
             Status = Status.New
         };
 

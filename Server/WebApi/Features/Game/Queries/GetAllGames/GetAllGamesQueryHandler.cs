@@ -16,14 +16,20 @@ public class GetAllGamesQueryHandler : IRequestHandler<GetAllGamesQuery, Result<
     
     public async Task<Result<GamesDto, string>> Handle(GetAllGamesQuery request, CancellationToken cancellationToken)
     {
-        var games = await _dbContext.Games.Select(game => new GameDto()
-        {
-            GameId = game.GameId,
-            Owner = game.Owner,
-            Date = game.Date,
-            MaxRating = game.MaxRating,
-            Status = game.Status
-        }).ToListAsync(cancellationToken: cancellationToken);
+        var games = await _dbContext.Games
+            .OrderByDescending(g => g.Date)
+            .ThenBy(g => g.Status)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .Select(game => new GameDto()
+            {
+                GameId = game.GameId,
+                Owner = game.Owner,
+                OwnerName = game.OwnerName,
+                Date = game.Date,
+                MaxRating = game.MaxRating,
+                Status = game.Status
+            }).ToListAsync(cancellationToken: cancellationToken);
         return new GamesDto() {Games = games};
     }
 }

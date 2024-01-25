@@ -1,11 +1,10 @@
 ﻿using Contracts;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using WebApi.Features.Shared;
 using WebApi.Services.Mongo;
 
-namespace WebApi.Features.Rating;
+namespace WebApi.Features.Rating.Queries.GetRating;
 
 public class RatingQueryHandler : IRequestHandler<RatingQuery, Result<RatingDto, string>>
 {
@@ -20,16 +19,18 @@ public class RatingQueryHandler : IRequestHandler<RatingQuery, Result<RatingDto,
 
     public async Task<Result<RatingDto, string>> Handle(RatingQuery request, CancellationToken cancellationToken)
     {
-        var users = _userManager.Users
-            .Select(u => new {Username = u.UserName, UserId = u.Id});
-        
-        var rating = await _ratingRepository.GetAllRatingsAsync(cancellationToken);
+        var rating = (await _ratingRepository.GetAllRatingsAsync(cancellationToken))
+            .OrderBy(r => r.Score)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize);
+
+        var users = _userManager.Users.AsEnumerable();
 
         var usersRating = rating
             .Join(users,
                 r => r.UserId,
-                u => u.UserId,
-                (r, u) => new UserDto() {Rating = r.Score, Username = u.Username});
+                u => u.Id,
+                (r, u) => new UserDto() {Rating = r.Score, Username = u.UserName});
         return new RatingDto(usersRating);
     }
 }
