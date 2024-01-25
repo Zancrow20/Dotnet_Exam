@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import "./CreateGame.css";
 export const CreateGame = () => {
     const [isPopupVisible, setPopupVisible] = useState(false);
-    const [minRating, setMinRating] = useState(100);
+    const [minRating, setMinRating] = useState(1000);
     const popupRef = useRef();
     useEffect(() => {
         const handleOutsideClick = (event) => {

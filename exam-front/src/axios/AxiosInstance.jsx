@@ -1,4 +1,5 @@
 import axios from "axios";
+import Ports from "../consts/Ports";
 
 
 export const getFetcher = (port) => {
@@ -13,3 +14,5 @@ export const getFetcher = (port) => {
   });
   return instance;
 };
+
+export const webApiFetcher = getFetcher(Ports.WebApi);

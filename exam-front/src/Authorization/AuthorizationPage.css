@@ -1,11 +1,15 @@
 .auth-form{
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 .auth-container{
     display: flex;
     flex-direction: column;
     gap: 10px;
+    justify-content: center;
+    align-items: center;
 }
 .auth-container a{
     text-decoration: none;

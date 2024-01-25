@@ -21,17 +21,17 @@ export const GamePage = () => {
     //   fetcher
     //     .get(`game/get/${searchParams.get("playlistId")}`)
     //     .then((res) => { 
-    //       console.log(res.data);
-          
+    //       console.log(res.data);  
     //     })
-    //     .catch((err) => {
-    //       if (err.response.status === 401) navigate("/authorize");
-    //       else{
-    //         console.log(err);
-    //       }
-    //     });
+    //     .catch((err) => handleError(err));
     }
   }, [searchParams]);
+  const handleError = (err) => {
+    if (err && err.response && err.response.status) {
+        if (err.response.status == 401) navigate("/authorize");
+    }
+    console.log(err);
+  };
 
 
 

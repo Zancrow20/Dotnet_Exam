@@ -1,3 +1,6 @@
+.greeting{
+    color: #212169;
+}
 .active-btns{
     display: flex;
     justify-content: space-around;

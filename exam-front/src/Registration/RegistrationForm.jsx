@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getFetcher } from "../axios/AxiosInstance";
-import Ports from "../consts/Ports";
+import { webApiFetcher } from "../axios/AxiosInstance";
 
-const fetcher = getFetcher(Ports.WebApi);
 export const RegistrationForm = () => {
     const navigate = useNavigate();
     const [credentials, setCredentials] = useState({
@@ -21,7 +19,7 @@ export const RegistrationForm = () => {
         event.preventDefault();
         setError("");
     
-        fetcher
+        webApiFetcher
           .post("auth/register", credentials)
           .then((res) => navigate("/authorize"))
           .catch((err) => handleError(err));
@@ -35,29 +33,26 @@ export const RegistrationForm = () => {
       };
     return (
         <>
-            <div>
-                <h2 className="reg-h2">Регистрация</h2>
-                <form className="register-form" onSubmit={handleSubmitForm}>
-                    <input
-                        type="text"
-                        placeholder="Имя пользователя"
-                        onChange={(e) => updateCredentials("username", e.target.value)}
-                    />
-                    <input
-                        type="password"
-                        placeholder="Пароль"
-                        onChange={(e) => updateCredentials("password", e.target.value)}
-                    />
-                    <input
-                        type="password"
-                        placeholder="Повторите пароль"
-                        onChange={(e) => updateCredentials("confirmPassword", e.target.value)}
-                    />
-                    <input type="submit" value="Зарегестрироваться" />
-                    <div>{error}</div>
-                </form> 
-
-            </div>
+            <h2 className="reg-h2">Регистрация</h2>
+            <form className="register-form" onSubmit={handleSubmitForm}>
+                <input
+                    type="text"
+                    placeholder="Имя пользователя"
+                    onChange={(e) => updateCredentials("username", e.target.value)}
+                />
+                <input
+                    type="password"
+                    placeholder="Пароль"
+                    onChange={(e) => updateCredentials("password", e.target.value)}
+                />
+                <input
+                    type="password"
+                    placeholder="Повторите пароль"
+                    onChange={(e) => updateCredentials("confirmPassword", e.target.value)}
+                />
+                <input type="submit" value="Зарегестрироваться" />
+                <div>{error}</div>
+            </form> 
             
         </>
     )

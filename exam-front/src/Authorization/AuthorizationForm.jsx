@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getFetcher } from "../axios/AxiosInstance";
-import Ports from "../consts/Ports";
+import { webApiFetcher } from "../axios/AxiosInstance";
 
-const fetcher = getFetcher(Ports.WebApi);
 
 export const AuthorizationForm = () => {
     const navigate = useNavigate();
@@ -21,7 +19,7 @@ export const AuthorizationForm = () => {
         event.preventDefault();
         setError("")
 
-        fetcher
+        webApiFetcher
           .post("auth/login", credentials)
           .then((res) => handleAuthorizationInfo(res.data))
           .catch((err) => handleError(err));
@@ -43,23 +41,21 @@ export const AuthorizationForm = () => {
     
     return (
         <>
-            <div>
-                <h2 className="reg-h2">Авторизация</h2>
-                <form className="auth-form" onSubmit={handleSubmitForm}>
-                    <input
-                        type="text"
-                        placeholder="Имя пользователя"
-                        onChange={(e) => updateCredentials("username", e.target.value.trim())}
-                    />
-                    <input
-                        type="password"
-                        placeholder="Пароль"
-                        onChange={(e) => updateCredentials("password", e.target.value.trim())}
-                    />
-                    <input type="submit" value="Войти" />
-                    <div>{error}</div>
-                </form>   
-            </div>   
+            <h2 className="reg-h2">Авторизация</h2>
+            <form className="auth-form" onSubmit={handleSubmitForm}>
+                <input
+                    type="text"
+                    placeholder="Имя пользователя"
+                    onChange={(e) => updateCredentials("username", e.target.value.trim())}
+                />
+                <input
+                    type="password"
+                    placeholder="Пароль"
+                    onChange={(e) => updateCredentials("password", e.target.value.trim())}
+                />
+                <input type="submit" value="Войти" />
+                <div>{error}</div>
+            </form>   
         </>
     )
 
