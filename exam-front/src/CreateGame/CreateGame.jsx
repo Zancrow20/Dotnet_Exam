@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import "./CreateGame.css";
+import { webApiFetcher } from '../axios/AxiosInstance';
+import { useNavigate } from 'react-router-dom';
 export const CreateGame = () => {
     const [isPopupVisible, setPopupVisible] = useState(false);
-    const [minRating, setMinRating] = useState(1000);
+    const [maxRating, setMaxRating] = useState(1000);
+    const navigate = useNavigate();
     const popupRef = useRef();
     useEffect(() => {
         const handleOutsideClick = (event) => {
@@ -20,11 +23,13 @@ export const CreateGame = () => {
 
     const handleSubmitForm = (event) => {
         event.preventDefault();
-    
-        // fetcher
-        //   .post("auth/register", credentials)
-        //   .then((res) => navigate("/authorize"))
-        //   .catch((err) => handleError(err));
+        setError("");
+        webApiFetcher
+          .post('game/create?maxRating='+maxRating)
+          .then((res) => {
+            if (res.status == 200) window.location.reload()
+          } )
+          .catch((err) => handleError(err));
       };
       const handleError = (err) => {
         if (err && err.response && err.response.data) {
@@ -45,8 +50,8 @@ export const CreateGame = () => {
                             <span>Минимальный рейтинг</span>
                             <input
                                 type="number"
-                                value={minRating}
-                                onChange={(e) => setMinRating(e.target.value)}
+                                value={maxRating}
+                                onChange={(e) => setMaxRating(e.target.value)}
                             />
                             <div className='error-message'>{error}</div>
                             <input type="submit" value="Создать" />

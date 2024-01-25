@@ -32,9 +32,64 @@
 
 .game-block{
     display: flex;
-    justify-content: space-around;
     border: 2px solid #4B539A;
     margin: 10px 0;
     padding: 10px 10px;
     border-radius: 12px;
+    align-items: center;
+}
+.gameId-part{
+    width: 35%;
+    text-align: center;
+}
+.owner-part{
+    width: 25%;
+    text-align: center;
+}
+.date-part{
+    width: 15%;
+    text-align: center;
+}
+.rating-part{
+    width: 10%;
+    text-align: center;
+}
+.enter-part{
+    width: 15%;
+}
+.enter-button{
+    text-align: center;
+    background: none;
+    border: 2px solid #212169;
+    border-radius: 12px;
+    padding: 5px;
+    width: 90%;
+    letter-spacing: 2px;
+    font-weight: 600;
+    color: #212169 ;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.games-header{
+    display: flex;
+    font-weight: 600;
+}
+.gameId-header{
+    width: 35%;
+    text-align: center;
+}
+.owner-header{
+    width: 25%;
+    text-align: center;
+}
+.date-header{
+    width: 15%;
+    text-align: center;
+}
+.rating-header{
+    width: 10%;
+    text-align: center;
+}
+.enter-header{
+    width: 15%;
+    text-align: center;
 }

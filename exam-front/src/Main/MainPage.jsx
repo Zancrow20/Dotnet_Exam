@@ -1,15 +1,30 @@
 import { useEffect, useState } from "react"
 import { CreateGame } from "../CreateGame/CreateGame"
 import { Rating } from "../Rating/Rating"
-import { GameBlock } from "./GameBlock"
 import "./MainPage.css"
 import { webApiFetcher } from "../axios/AxiosInstance"
 import { useNavigate } from "react-router-dom"
+import { GameItem } from "./GameItem"
+import { GameBlock } from "./GameBlock"
 
 
 export const MainPage = () => {
     const [username, setUsername] = useState("");
     const [userRating, setUserRating] = useState(0);
+
+    const gameArray = [
+        {
+          gameId: "",
+          owner: "",
+          date: "",
+          status: 0,
+          maxRating: ""
+        },
+      ];
+    
+      const [games, setGames] = useState(gameArray);
+
+
     const navigate = useNavigate();
     useEffect(() => {
         webApiFetcher
@@ -19,6 +34,11 @@ export const MainPage = () => {
                 setUserRating(res.data.rating);
             })
             .catch((err) => handleError(err));
+
+        webApiFetcher
+        .get("game/all")
+        .then((res) => setGames((res.data.games)))
+        .catch((err) => handleError(err));
     }, []);
 
     const handleError = (err) => {
@@ -35,10 +55,7 @@ export const MainPage = () => {
                 <CreateGame/>
             </div>
             <div className="greeting">Здравствуйте, {username}! Ваш рейтинг: {userRating}</div>
-            <div className="game-section">
-                <GameBlock/>
-                <GameBlock/>
-            </div>      
+            <GameBlock games={games}/>      
         </>
     )
 }

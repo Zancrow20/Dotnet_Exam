@@ -4,6 +4,7 @@ import { RatingItem } from './RatingItem';
 export const Rating = () => {
     const [isPopupVisible, setPopupVisible] = useState(false);
     const popupRef = useRef();
+    const [currentPage, setCurrentPage] = useState(0);
     useEffect(() => {
         const handleOutsideClick = (event) => {
             if (popupRef.current && !popupRef.current.contains(event.target)) {
@@ -33,11 +34,6 @@ export const Rating = () => {
                             <RatingItem/>
                             <RatingItem/>
                             <RatingItem/>
-                            <RatingItem/>
-                            <RatingItem/>
-                            <RatingItem/>
-
-
                         </div>
 
                     </div>
