@@ -38,7 +38,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\ChatHistory\Queries\" />
       <Folder Include="Features\Game\Commands\JoinGame\" />
       <Folder Include="Features\Game\Commands\LeaveGame\" />
     </ItemGroup>

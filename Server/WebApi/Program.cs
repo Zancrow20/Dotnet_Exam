@@ -63,6 +63,7 @@ app.MapAuthEndpoints();
 app.MapUserEndpoints();
 app.MapRatingEndpoints();
 app.MapGameEndpoints();
+app.MapChatEndpoints();
 
 app.MapHub<GameHub>("/gamehub");
 
