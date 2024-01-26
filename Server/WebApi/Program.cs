@@ -27,7 +27,13 @@ builder.Services
     .AddMassTransitAndRabbitMq(rabbitMqConfig)
     .AddSwagger()
     .AddCors(options => options.AddPolicy(MyPolicy, pb 
-        => pb.WithOrigins("http://localhost:3000")
+        => pb.SetIsOriginAllowed(origin =>
+            {
+                if (string.IsNullOrWhiteSpace(origin)) return false;
+
+                return origin.ToLower().StartsWith("http://localhost") ||
+                       origin.ToLower().StartsWith("https://localhost");
+            })
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()

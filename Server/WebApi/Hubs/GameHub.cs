@@ -96,6 +96,7 @@ public class GameHub : Hub<IGameHubClient>
             
         await _gameService.ChangeGameStatus(Status.Finished, gameId);
         await Clients.Group(gameId).FinishGame(finishDto);
+        _store.UsersMove.Remove(gameId, out _);
     }
     
     public async Task WatchGame(string gameId)
