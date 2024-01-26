@@ -37,9 +37,4 @@
       <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Features\Game\Commands\JoinGame\" />
-      <Folder Include="Features\Game\Commands\LeaveGame\" />
-    </ItemGroup>
-
 </Project>

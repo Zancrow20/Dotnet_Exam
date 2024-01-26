@@ -20,12 +20,7 @@ namespace WebApi.ApplicationServices;
 public static class ApplicationServicesExtensions
 {
     private static readonly Assembly Assembly = Assembly.GetExecutingAssembly();
-    
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-    {
-        return services.AddScoped<IGameService, GameService>();
-    }
-    
+
     public static IServiceCollection AddMediatr(this IServiceCollection services)
     {
         return services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly));

@@ -4,7 +4,10 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using WebApi.Features.ChatHistory.Commands;
-using WebApi.Services.GameService;
+using WebApi.Features.Game.Commands.ChangeGameStatus;
+using WebApi.Features.Game.Commands.HandleMoves;
+using WebApi.Features.Game.Commands.JoinGame;
+using WebApi.Features.Game.Queries.CheckUserRating;
 
 namespace WebApi.Hubs;
 
@@ -13,14 +16,11 @@ public class GameHub : Hub<IGameHubClient>
 {
     private readonly IMediator _mediator;
     private readonly Store _store;
-    private readonly IGameService _gameService;
     
-
-    public GameHub(IMediator mediator, Store store, IGameService gameService)
+    public GameHub(IMediator mediator, Store store)
     {
         _mediator = mediator;
         _store = store;
-        _gameService = gameService;
     }
 
     public async Task JoinGame(string gameId)
@@ -28,8 +28,8 @@ public class GameHub : Hub<IGameHubClient>
         var username = Context.User!.Identity!.Name;
         var game = $"{gameId}_game";
         
-        //Check user rating
-        var canJoin = await _gameService.CheckCanUserJoin(gameId, username);
+        var checkUserRatingQuery = new CheckUserRatingQuery(){GameId = gameId, Username = username};
+        var canJoin = await _mediator.Send(checkUserRatingQuery);
         if(!canJoin)
         {
             await Clients.Client(Context.ConnectionId).JoinRefused("Рейтинг выше максимального!");
@@ -41,7 +41,7 @@ public class GameHub : Hub<IGameHubClient>
             _store.GameConnections[game] = new HashSet<string>();
         }
         
-        if (_store.GameConnections[game].Count == 2)
+        if (_store.GameConnections.ContainsKey(game) && _store.GameConnections[game].Count == 2)
         {
             await Clients.Client(Context.ConnectionId).JoinRefused("В игре уже 2 игрока!");
             return;
@@ -59,19 +59,25 @@ public class GameHub : Hub<IGameHubClient>
         if (!newPlayer)
             return;
         
-        //Todo: command to add player name to game and then check count of players and then change status of game
-        await _gameService.AddToGame(username, gameId);
+        var userJoinCommand = new JoinGameCommand(){GameId = gameId, Username = username};
+        await _mediator.Send(userJoinCommand);
         
         _store.UserGroupsConnections[Context.ConnectionId].GameGroup = game;
         await Groups.AddToGroupAsync(Context.ConnectionId, game);
 
         if (_store.GameConnections[game].Count == 2)
         {
-            await _gameService.ChangeGameStatus(Status.Started, gameId);
+            var changeGameStatusCommand = new ChangeGameStatusCommand(){GameId = gameId, Status = Status.Started};
+            await _mediator.Send(changeGameStatusCommand);          
             await Clients.Client(Context.ConnectionId).SuccessJoin();
-            await Clients.Groups(game).StartGame();
-        }
 
+            await Clients.Groups(game).StartGame();
+
+            await Task.Delay(TimeSpan.FromSeconds(10));
+            
+            await Clients.Groups(game).AskFigure();
+            return;
+        }
         await Clients.Client(Context.ConnectionId).SuccessJoin();
 
     }
@@ -86,23 +92,29 @@ public class GameHub : Hub<IGameHubClient>
             return;
         }
         
-        //Handle move
         var userMove = new UserMove(username,  figure);
         
-        //Todo Command
-        var gameRes = await _gameService.HandleMove(userMove, anotherUserMove, gameId);
+        var handleMoveCommand = new MovesCommand()
+        {
+            GameId = gameId,
+            UserMove1 = userMove,
+            UserMove2 = anotherUserMove
+        };
+        var gameResult = await _mediator.Send(handleMoveCommand);
+        
         FinishGameDto finishDto;
-        finishDto = gameRes.Winner == null ? new FinishGameDto() {WinnerFigure = figure, Message = gameRes.Message} 
+        finishDto = gameResult.Winner == null ? new FinishGameDto() {WinnerFigure = figure, Message = gameResult.Message} 
             : new FinishGameDto()
             {
-                WinnerName = gameRes.Winner.Username,
-                WinnerFigure = gameRes.Winner.Figure,
-                LoserName = gameRes.Loser.Username,
-                LoserFigure = gameRes.Loser.Figure,
-                Message = gameRes.Message
+                WinnerName = gameResult.Winner.Username,
+                WinnerFigure = gameResult.Winner.Figure,
+                LoserName = gameResult.Loser.Username,
+                LoserFigure = gameResult.Loser.Figure,
+                Message = gameResult.Message
             };
             
-        await _gameService.ChangeGameStatus(Status.Finished, gameId);
+        var changeGameStatusCommand = new ChangeGameStatusCommand(){GameId = gameId, Status = Status.Finished};
+        await _mediator.Send(changeGameStatusCommand);
         await Clients.Group(gameId).FinishGame(finishDto);
         _store.UsersMove.Remove(gameId, out _);
     }
@@ -144,12 +156,13 @@ public class GameHub : Hub<IGameHubClient>
         var gameGroup = _store.UserGroupsConnections[Context.ConnectionId].GameGroup;
         if (gameGroup != null)
         {
-            //Todo: command to delete user from game in db
             var username = Context.User?.Identity?.Name!;
-            /*var command = new { Username = username, };
-            var res = await _mediator.Send(command);*/
-
-            await _gameService.DeleteFromGame(username, gameGroup.Split("_")[0]);
+            var userJoinCommand = new JoinGameCommand()
+            {
+                GameId = gameGroup.Split("_")[0],
+                Username = username
+            };
+            await _mediator.Send(userJoinCommand);
         }
 
         _store.GameConnections[gameGroup]
