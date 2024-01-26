@@ -44,7 +44,8 @@ public class MovesCommandHandler : IRequestHandler<MovesCommand, GameResult>
         {
             await _bus.Publish(new RabbitMqMessage(firstUser.Id, secondUser.Id, true),
                 cancellationToken);
-            chatMessage.Message = $"Ничья между игроками {firstUser.UserName} и {secondUser.UserName}";
+            chatMessage.Message = $"Ничья между игроками {firstUser.UserName}:{firstUserMove.ToString()} " +
+                                  $"и {secondUser.UserName}:{secondUserMove.ToString()}";
         }
         else if (firstUserMove == Figure.Scissors && secondUserMove == Figure.Paper ||
                  firstUserMove == Figure.Rock && secondUserMove == Figure.Scissors ||
@@ -52,7 +53,8 @@ public class MovesCommandHandler : IRequestHandler<MovesCommand, GameResult>
         {
             await _bus.Publish(new RabbitMqMessage(firstUser.Id, secondUser.Id, false),
                 cancellationToken);
-            chatMessage.Message = $"Игрок {firstUser.UserName} победил";
+            chatMessage.Message = $"Игрок {firstUser.UserName}:{firstUserMove.ToString()} " +
+                                  $"победил игрока {secondUser.UserName}:{secondUserMove.ToString()}";
             winner = request.UserMove1;
             loser = request.UserMove2;
         }
@@ -60,7 +62,8 @@ public class MovesCommandHandler : IRequestHandler<MovesCommand, GameResult>
         {
             await _bus.Publish(new RabbitMqMessage( secondUser.Id, firstUser.Id, false),
                 cancellationToken);
-            chatMessage.Message = $"Игрок {secondUser.UserName} победил";
+            chatMessage.Message = $"Игрок {secondUser.UserName}:{secondUserMove.ToString()} " +
+                                  $"победил игрока{firstUser.UserName}:{firstUserMove.ToString()}";
             winner = request.UserMove2;
             loser = request.UserMove1;
         }

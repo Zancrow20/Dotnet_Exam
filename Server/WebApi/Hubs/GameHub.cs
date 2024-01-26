@@ -122,7 +122,9 @@ public class GameHub : Hub<IGameHubClient>
             
         var changeGameStatusCommand = new ChangeGameStatusCommand(){GameId = gameId, Status = Status.Finished};
         await _mediator.Send(changeGameStatusCommand);
-        await Clients.Group(gameId).FinishGame(finishDto);
+        var game = $"{gameId}_game";
+        await Clients.Group(game).FinishGame(finishDto);
+        await Clients.Group(gameId).ReceiveMessage(new MessageDto("Server", gameResult.Message));
         _store.UsersMove.Remove(gameId, out _);
     }
     
