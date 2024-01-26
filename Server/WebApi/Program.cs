@@ -27,16 +27,11 @@ builder.Services
     .AddMassTransitAndRabbitMq(rabbitMqConfig)
     .AddSwagger()
     .AddCors(options => options.AddPolicy(MyPolicy, pb 
-        => pb.SetIsOriginAllowed(origin =>
-            {
-                if (string.IsNullOrWhiteSpace(origin)) return false;
-
-                return origin.ToLower().StartsWith("http://localhost") ||
-                       origin.ToLower().StartsWith("https://localhost");
-            })
+        => pb            
+            //.AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials()
+            .AllowAnyOrigin()
     ))
     .AddSignalR();
 
@@ -63,6 +58,7 @@ app.MapAuthEndpoints();
 app.MapUserEndpoints();
 app.MapRatingEndpoints();
 app.MapGameEndpoints();
+app.MapChatEndpoints();
 
 app.MapHub<GameHub>("/gamehub");
 

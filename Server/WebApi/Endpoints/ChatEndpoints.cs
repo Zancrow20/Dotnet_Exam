@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Features.ChatHistory.Queries;
 
 namespace WebApi.Endpoints;
 
@@ -11,7 +12,9 @@ public static class ChatEndpoints
 
         routeGroup.MapGet("/getHistory", async ([FromServices] IMediator mediator, string gameId) =>
         {
-            
+            var query = new GetChatHistoryQuery() { GameId = gameId};
+            var res = await mediator.Send(query);
+            return res.Match(Results.Ok, Results.BadRequest);
         });
     }
 }
