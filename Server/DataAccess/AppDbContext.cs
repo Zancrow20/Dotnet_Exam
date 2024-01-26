@@ -8,6 +8,7 @@ namespace DataAccess;
 public class AppDbContext : IdentityDbContext<User>
 {
     public DbSet<Game> Games { get; set; } = default!;
+    public DbSet<ChatMessage> ChatMessages { get; set; } = default!;
     public AppDbContext(DbContextOptions options) : base(options)
     {
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

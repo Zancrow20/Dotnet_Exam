@@ -10,6 +10,8 @@
   </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MassTransit" Version="8.1.3" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.1.3" />
         <PackageReference Include="MediatR" Version="12.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
@@ -33,6 +35,12 @@
     <ItemGroup>
       <ProjectReference Include="..\Contracts\Contracts.csproj" />
       <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Features\ChatHistory\Queries\" />
+      <Folder Include="Features\Game\Commands\JoinGame\" />
+      <Folder Include="Features\Game\Commands\LeaveGame\" />
     </ItemGroup>
 
 </Project>

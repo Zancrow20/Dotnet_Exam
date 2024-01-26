@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text;
 using DataAccess;
 using Domain.Entities;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,15 +10,21 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using WebApi.Configuration;
-using WebApi.Services;
+using WebApi.Services.GameService;
 using WebApi.Services.Jwt;
 using WebApi.Services.Mongo;
+using WebApi.Services.RabbitMq;
 
 namespace WebApi.ApplicationServices;
 
 public static class ApplicationServicesExtensions
 {
     private static readonly Assembly Assembly = Assembly.GetExecutingAssembly();
+    
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    {
+        return services.AddScoped<IGameService, GameService>();
+    }
     
     public static IServiceCollection AddMediatr(this IServiceCollection services)
     {
@@ -125,5 +132,28 @@ public static class ApplicationServicesExtensions
 
         var ratingCollection = mongoDatabase.GetCollection<Rating>(mongoConfiguration.CollectionName);
         return services.AddTransient<IRatingRepository, RatingRepository>(_ => new RatingRepository(ratingCollection));
+    }
+    
+    public static IServiceCollection AddMassTransitAndRabbitMq(this IServiceCollection services, 
+        RabbitMqConfig rabbitMqConfig)
+    {
+        services.AddMassTransit(x =>
+        {
+            x.SetKebabCaseEndpointNameFormatter();
+            x.AddConsumer<GameResultsConsumer>();
+
+            x.UsingRabbitMq((ctx, cfg) =>
+            {
+                cfg.Host(new Uri(rabbitMqConfig.Host), h =>
+                {
+                    h.Username(rabbitMqConfig.Username);
+                    h.Password(rabbitMqConfig.Password);
+                });
+        
+                cfg.ConfigureEndpoints(ctx);
+            });
+        });
+        
+        return services;
     }
 }
