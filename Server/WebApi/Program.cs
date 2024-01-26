@@ -28,16 +28,10 @@ builder.Services
     .AddSwagger()
     .AddCors(options => options.AddPolicy(MyPolicy, pb 
         => pb            
-            .AllowCredentials()
+            //.AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .SetIsOriginAllowed(origin =>
-            {
-                if (string.IsNullOrWhiteSpace(origin)) return false;
-
-                return origin.ToLower().StartsWith("http://localhost") ||
-                       origin.ToLower().StartsWith("https://localhost");
-            })
+            .AllowAnyOrigin()
     ))
     .AddSignalR();
 
