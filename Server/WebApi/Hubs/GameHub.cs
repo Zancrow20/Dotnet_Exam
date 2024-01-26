@@ -8,7 +8,7 @@ using WebApi.Services.GameService;
 
 namespace WebApi.Hubs;
 
-
+[Authorize]
 public class GameHub : Hub<IGameHubClient>
 {
     private readonly IMediator _mediator;
@@ -32,13 +32,18 @@ public class GameHub : Hub<IGameHubClient>
         var canJoin = await _gameService.CheckCanUserJoin(gameId, username);
         if(!canJoin)
         {
-            await Clients.Groups(gameId).JoinRefused("Рейтинг выше максимального!");
+            await Clients.Client(Context.ConnectionId).JoinRefused("Рейтинг выше максимального!");
             return;
+        }
+
+        if (!_store.GameConnections.ContainsKey(game))
+        {
+            _store.GameConnections[game] = new HashSet<string>();
         }
         
         if (_store.GameConnections[game].Count == 2)
         {
-            await Clients.Groups(gameId).JoinRefused("В игре уже 2 игрока!");
+            await Clients.Client(Context.ConnectionId).JoinRefused("В игре уже 2 игрока!");
             return;
         }
         
@@ -63,8 +68,11 @@ public class GameHub : Hub<IGameHubClient>
         if (_store.GameConnections[game].Count == 2)
         {
             await _gameService.ChangeGameStatus(Status.Started, gameId);
+            await Clients.Client(Context.ConnectionId).SuccessJoin();
             await Clients.Groups(game).StartGame();
         }
+
+        await Clients.Client(Context.ConnectionId).SuccessJoin();
 
     }
 
