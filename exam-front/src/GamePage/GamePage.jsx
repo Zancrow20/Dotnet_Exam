@@ -26,6 +26,14 @@ export const GamePage = () => {
   const [finishMessage, setFinishMessage] = useState("")
   const [resultString, setResultString] = useState("")
 
+  latestChat.current = chat;
+
+  function updateHistory(){
+    webApiFetcher.get(`/chat/getHistory?gameId=${searchParams.get("gameId")}`)
+        .then(result => setChat(result.data.chatMessageDtos))
+        .catch(ex => console.log(ex));   
+  }
+
   useEffect(() => {
     if (searchParams.get("gameId")) {
       webApiFetcher
@@ -52,7 +60,7 @@ export const GamePage = () => {
       .withAutomaticReconnect()
       .build();
     setConnection(newConnection)
-    //updateHistory();
+    updateHistory();
 
   }, [searchParams]);
 

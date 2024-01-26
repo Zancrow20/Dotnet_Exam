@@ -157,7 +157,7 @@ public class GameHub : Hub<IGameHubClient>
             return;
         
         var messageDto = new MessageDto(username!, message);
-        await Clients.OthersInGroup(gameId).ReceiveMessage(messageDto);
+        await Clients.Group(gameId).ReceiveMessage(messageDto);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)

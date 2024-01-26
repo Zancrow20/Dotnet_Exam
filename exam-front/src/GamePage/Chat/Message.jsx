@@ -4,7 +4,7 @@ export const Message = ({message}) => {
     return(
         <>
             <div className='message'>
-                {message.username} : {message.message}
+                {message.from} : {message.message}
             </div>
             
         </>
