@@ -57,6 +57,7 @@ export const GameBlock = () => {
                     <div className="owner-header">Имя пользователя</div>
                     <div className="date-header">Дата создания</div>
                     <div className="rating-header">Рейтинг</div>
+                    <div className="status-header">Статус</div>
                     <div className="enter-header"></div>
                 </div>
 
