@@ -9,6 +9,7 @@ import { Chat } from "./Chat/Chat";
 import { useHandleError } from "../ErrorHandler/ErrorHandler";
 import Ports from "../consts/Ports";
 import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
+import { getSimbol } from "../GetSimbol";
 
 
 export const GamePage = () => {
@@ -21,13 +22,16 @@ export const GamePage = () => {
   const [chat, setChat] = useState([]);
   const latestChat = useRef(null);
   const [isPlayer, setIsPlayer] = useState(false);
-  const [isGameProcess, setIsGameProcess] = useState(false);
+  const [gameState, setGameState] = useState(0);
+  const [finishMessage, setFinishMessage] = useState("")
+  const [resultString, setResultString] = useState("")
 
   useEffect(() => {
     if (searchParams.get("gameId")) {
       webApiFetcher
         .get(`game?gameId=${searchParams.get("gameId")}`)
         .then((res) => {
+          setGameState(res.data.status)
           setIsLoad(true);
         })
         .catch((err) => {
@@ -62,7 +66,7 @@ export const GamePage = () => {
           connection.send("WatchGame", searchParams.get("gameId"));
 
           connection.on('StartGame', () => {
-            setIsGameProcess(true);
+            setGameState(1);
           });
 
           connection.on('SuccessJoin', () => {
@@ -70,7 +74,6 @@ export const GamePage = () => {
             setIsPlayer(true);
           });
 
-          
           connection.on('ReceiveMessage', message => {
             console.log("recieve")
             const updatedChat = [...latestChat.current];
@@ -78,7 +81,12 @@ export const GamePage = () => {
             setChat(updatedChat);
           });
 
-          connection.on("JoinRefused", (message) => console.log(message))
+          connection.on("JoinRefused", (message) => alert(message))
+
+          connection.on("FinishGame", finishDto => {
+            console.log(finishDto);
+            setFinishMessage(finishDto.message);
+            setResultString(`${finishDto.winnerName}: ${getSimbol(finishDto.winnerFigure)} vs ${finishDto.loserName}: ${getSimbol(finishDto.loserFigure)}`)})
         })
         .catch(e => console.log('Connection failed: ', e));
     }
@@ -89,10 +97,12 @@ export const GamePage = () => {
       connection.on("AskFigure", () => {
         console.log(simbol)
         makeMove();
-        setIsGameProcess(false)
+        setGameState(2)
       })
     }
-  }, [simbol])
+  }, [simbol, gameState])
+
+
 
   const enterToGame = async () => {
     if (connection._connectionStarted) {
@@ -132,8 +142,13 @@ export const GamePage = () => {
 
     if (connection._connectionStarted) {
       try {
-        if (simbol === 10) setSimbol(Math.floor(Math.random() * 3));
-        await connection.send('MakeMove', searchParams.get("gameId"), simbol);
+        if (simbol === 10){
+          await connection.send('MakeMove', searchParams.get("gameId"), Math.floor(Math.random() * 3));
+        } 
+        else{
+          await connection.send('MakeMove', searchParams.get("gameId"), simbol);
+        }
+          
       }
       catch (e) {
         console.log(e);
@@ -148,8 +163,14 @@ export const GamePage = () => {
     isLoad && (
       <>
         <div>
-          {!isPlayer && (<button onClick={enterToGame} className="enter-game-btn">Присоединиться</button>)}
-          {isGameProcess && <span>Выберете один из значков снизу. На выбор дается 10 секунд</span>}
+          {(!isPlayer && gameState === 0) && (<button onClick={enterToGame} className="enter-game-btn">Присоединиться</button>)}
+          {(gameState===0) && <span>Игра создана. Ожидание игроков.</span>}
+          {(gameState === 2) && <p>Игра завершена. {finishMessage}</p>}
+          {(gameState === 2) && <p>{resultString}</p>}
+          {(gameState === 1) && <span>Идет игра. Игрокам нужно выбрать символ. На выбор дается 10 секунд</span> }
+          <br/>
+          {(gameState === 1 && isPlayer) && <span>Ваш символ: {getSimbol(simbol)}</span>}
+          
           <div className="btn-panel">
             <button onClick={() => { setSimbol(0) }} className="rock-btn">
               <img className="rock-btn-img" src={rock} alt="Камень" />
