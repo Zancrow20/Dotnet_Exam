@@ -12,18 +12,15 @@ namespace WebApi.Features.Game.Commands.HandleMoves;
 public class MovesCommandHandler : IRequestHandler<MovesCommand, GameResult>
 {
     private readonly AppDbContext _dbContext;
-    private readonly IRatingRepository _ratingRepository;
     private readonly UserManager<Domain.Entities.User> _userManager;
     private readonly IBus _bus;
 
     public MovesCommandHandler(UserManager<Domain.Entities.User> userManager,
         IBus bus,
-        IRatingRepository ratingRepository,
         AppDbContext dbContext)
     {
         _userManager = userManager;
         _bus = bus;
-        _ratingRepository = ratingRepository;
         _dbContext = dbContext;
     }
 

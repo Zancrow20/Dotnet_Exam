@@ -23,6 +23,6 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, boo
             To = "Server"
         };
         _dbContext.ChatMessages.Add(message);
-        return await _dbContext.SaveChangesAsync(cancellationToken) < 1;
+        return await _dbContext.SaveChangesAsync(cancellationToken) >= 1;
     }
 }
