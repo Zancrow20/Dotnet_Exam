@@ -4,14 +4,14 @@ import { Rating } from "../Rating/Rating"
 import "./MainPage.css"
 import { webApiFetcher } from "../axios/AxiosInstance"
 import { useNavigate } from "react-router-dom"
-import { GameItem } from "./GameItem"
 import { GameBlock } from "./GameBlock"
+import { useHandleError } from "../ErrorHandler/ErrorHandler"
 
 
 export const MainPage = () => {
     const [username, setUsername] = useState("");
     const [userRating, setUserRating] = useState(0);
-    const navigate = useNavigate();
+    const handleError = useHandleError();
 
     useEffect(() => {
         webApiFetcher
@@ -22,13 +22,6 @@ export const MainPage = () => {
             })
             .catch((err) => handleError(err));
     }, []);
-
-    const handleError = (err) => {
-        if (err && err.response && err.response.status) {
-            if (err.response.status == 401) navigate("/authorize");
-        }
-        console.log(err);
-    };
 
     return (
         <>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { GameItem } from "./GameItem"
 import { webApiFetcher } from "../axios/AxiosInstance";
+import { useHandleError } from "../ErrorHandler/ErrorHandler";
 
 
 
@@ -10,11 +11,13 @@ export const GameBlock = () => {
     const [fetching, setFetching] = useState(true);
     const [lastPageNumb, setLastPageNumb] = useState(0);
     const pageSize = 8;
+    const handleError = useHandleError();
 
     useEffect(() => {
         if (fetching){  
             webApiFetcher.get(`game/lastPage?pageSize=${pageSize}`)
                 .then(res => {setLastPageNumb(res.data)}) 
+                .catch(err => handleError(err))
         }   
     }, [])
 
@@ -26,10 +29,13 @@ export const GameBlock = () => {
                         setGames([...games, ...res.data.games]);
                         setCurrentPage(currentPage + 1);
                     })
+                    .catch(err => handleError(err))
                     .finally(() => setFetching(false));
             }
         
         }, [fetching])
+
+        
 
         
 
@@ -63,7 +69,6 @@ export const GameBlock = () => {
 
                 {games.map((game) => (
                     <GameItem key={game.gameId} game={game} />
-
                 ))}
             </div>
     )

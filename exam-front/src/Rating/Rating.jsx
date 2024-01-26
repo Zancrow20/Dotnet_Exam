@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import "./Rating.css";
 import { RatingItem } from './RatingItem';
 import { webApiFetcher } from '../axios/AxiosInstance';
-import { useNavigate } from 'react-router-dom';
 import leftArrow from "./media/left-arrow.png";
 import rightArrow from "./media/right-arrow.png";
+import { useHandleError } from '../ErrorHandler/ErrorHandler';
 export const Rating = () => {
     const [isPopupVisible, setPopupVisible] = useState(false);
     const popupRef = useRef();
@@ -12,7 +12,7 @@ export const Rating = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
     const [ratingList, setRatingList] = useState([]);
-    const navigate = useNavigate();
+    const handleError = useHandleError();
 
     useEffect(() => {
         const handleOutsideClick = (event) => {
@@ -38,13 +38,6 @@ export const Rating = () => {
             .catch((err) => handleError(err));
         
     }, [currentPage]);
-
-    const handleError = (err) => {
-        if (err && err.response && err.response.status) {
-            if (err.response.status == 401) navigate("/authorize");
-        }
-        console.log(err);
-    };
 
     const leftClick = () =>{
         setCurrentPage(currentPage-1);

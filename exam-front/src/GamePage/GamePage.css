@@ -1,3 +1,40 @@
+.btn-panel{
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 25vh;
+}
+.paper-btn{
+    background: none;
+    border: none;
+}
 .rock-btn{
-    
+    background: none;
+    border: none;
+}
+.scissors-btn{
+    background: none;
+    border: none;
+}
+.paper-btn,.rock-btn,.scissors-btn{
+    height: 100%;
+}
+.paper-btn-img, .rock-btn-img, .scissors-btn-img{
+    width: 100%;
+    height: 100%;
+}
+.enter-game-btn{
+    text-align: center;
+    background: #4B539A;
+    border: 2px solid #212169;
+    border-radius: 12px;
+    padding: 10px 10px;
+    margin-top: 10px;
+    letter-spacing: 2px;
+    font-weight: 600;
+    font-size: 18px;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
