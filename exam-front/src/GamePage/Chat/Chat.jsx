@@ -3,23 +3,6 @@ import { ChatWindow } from "./ChatWindow";
 import "./Chat.css"
 
 export const Chat = (props) => {
-    const chat = [
-        {
-            username: "Ola",
-            message: "message1"
-        },
-        {
-            username: "LOla",
-            message: "message2"
-        },
-        {
-            username: "LOlo",
-            message: "message3"
-        },
-    ]
-
-    
-
     return (
         <div className="chat-container">
             <h3>Чат</h3>
