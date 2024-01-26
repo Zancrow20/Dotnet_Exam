@@ -36,10 +36,9 @@ export const GamePage = () => {
 
     const authToken = localStorage.getItem("access-token") ?? "";
     const newConnection = new HubConnectionBuilder()
-      .withUrl(`https://localhost:${Ports.WebApi}/chat`, {
+      .withUrl(`https://localhost:${Ports.WebApi}/gamehub`, {
         transport: HttpTransportType.WebSockets,
-        skipNegotiation: true,
-        accessTokenFactory: () => `${authToken}`
+        skipNegotiation: true
       })
       .withAutomaticReconnect()
       .build();
