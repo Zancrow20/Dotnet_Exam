@@ -17,8 +17,8 @@ public class GetAllGamesQueryHandler : IRequestHandler<GetAllGamesQuery, Result<
     public async Task<Result<GamesDto, string>> Handle(GetAllGamesQuery request, CancellationToken cancellationToken)
     {
         var games = await _dbContext.Games
-            .OrderByDescending(g => g.Date)
-            .ThenBy(g => g.Status)
+            .OrderByDescending(g => g.Status)
+            .ThenBy(g => g.Date)
             .Skip((request.PageNumber - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(game => new GameDto()

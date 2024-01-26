@@ -45,24 +45,5 @@ public static class GameEndpoints
             return result.Match(Results.Ok, Results.BadRequest);
         });
         
-        //Todo
-        routeGroup.MapGet("/join", async (HttpContext context,
-            [FromServices] IMediator mediator, [FromQuery] string gameId) =>
-        {
-            var username = context.User.Identity!.Name;
-            var query = new GameQuery() {GameId = gameId};
-            var result = await mediator.Send(query);
-            return result.Match(Results.Ok, Results.BadRequest);
-        });
-        
-        //Todo
-        routeGroup.MapGet("/leave", async (HttpContext context,
-            [FromServices] IMediator mediator, [FromQuery] string gameId) =>
-        {
-            var username = context.User.Identity!.Name;
-            var query = new GameQuery() {GameId = gameId};
-            var result = await mediator.Send(query);
-            return result.Match(Results.Ok, Results.BadRequest);
-        });
     }
 }
