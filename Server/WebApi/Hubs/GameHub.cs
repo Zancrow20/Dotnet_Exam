@@ -35,6 +35,11 @@ public class GameHub : Hub<IGameHubClient>
             await Clients.Client(Context.ConnectionId).JoinRefused("Рейтинг выше максимального!");
             return;
         }
+
+        if (!_store.GameConnections.ContainsKey(game))
+        {
+            _store.GameConnections[game] = new HashSet<string>();
+        }
         
         if (_store.GameConnections.ContainsKey(game) && _store.GameConnections[game].Count == 2)
         {
@@ -63,14 +68,18 @@ public class GameHub : Hub<IGameHubClient>
         if (_store.GameConnections[game].Count == 2)
         {
             var changeGameStatusCommand = new ChangeGameStatusCommand(){GameId = gameId, Status = Status.Started};
-            await _mediator.Send(changeGameStatusCommand);
-            
+            await _mediator.Send(changeGameStatusCommand);          
+            await Clients.Client(Context.ConnectionId).SuccessJoin();
+
             await Clients.Groups(game).StartGame();
 
             await Task.Delay(TimeSpan.FromSeconds(10));
             
             await Clients.Groups(game).AskFigure();
+            return;
         }
+        await Clients.Client(Context.ConnectionId).SuccessJoin();
+
     }
 
     public async Task MakeMove(string gameId, Figure figure)

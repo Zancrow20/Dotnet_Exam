@@ -13,7 +13,7 @@
     max-width: 100%;
 }
 .rating-items-block{
-    max-height: 360px;
+    height: 320px;
     margin: 15px 5px 5px;
 }
 .rating-item{
@@ -21,4 +21,25 @@
     justify-content: space-between;
     padding: 5px 15px;
     margin: 7px;
+}
+.rating-pagination-block{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+.rating-page-numb{
+    color: black;
+    font-size: 24px;
+}
+.left-arrow{
+    width: 30px;
+    display: block;
+}
+.right-arrow{
+    width: 30px;
+    display: block;
+}
+.non-visible{
+    display: none;
 }

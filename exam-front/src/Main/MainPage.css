@@ -59,15 +59,17 @@
 }
 .enter-button{
     text-align: center;
-    background: none;
+    background: #4B539A;
     border: 2px solid #212169;
     border-radius: 12px;
     padding: 5px;
     width: 90%;
     letter-spacing: 2px;
     font-weight: 600;
-    color: #212169 ;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.enter-button:hover{
+    background: none;
 }
 .games-header{
     display: flex;

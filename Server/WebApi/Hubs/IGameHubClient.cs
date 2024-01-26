@@ -9,6 +9,7 @@ public interface IGameHubClient
     Task JoinRefused(string message);
     Task ReceiveMessage(MessageDto messageDto);
     Task AskFigure();
+    Task SuccessJoin();
 }
 
 public class FinishGameDto
