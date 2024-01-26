@@ -11,7 +11,7 @@ export const ChatInput = ({sendMessage}) => {
         const isMessageProvided = mes && mes !== '';
 
         if (isMessageProvided) {
-            sendMessage(" ",message);
+            sendMessage(message);
             setMessage("")
         } 
         else {

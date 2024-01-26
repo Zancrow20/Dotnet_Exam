@@ -25,10 +25,6 @@ function App() {
             element={<PageBuilder component={<RegistrationPage/>}/>}
           />
           <Route
-            path="/timer"
-            element={<PageBuilder component={<Timer/>}/>}
-          />
-          <Route
             path="*"
             element={<PageBuilder component={<MainPage/>}/>}
           />

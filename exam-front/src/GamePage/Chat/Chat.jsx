@@ -2,7 +2,7 @@ import { ChatInput } from "./ChatInput";
 import { ChatWindow } from "./ChatWindow";
 import "./Chat.css"
 
-export const Chat = () => {
+export const Chat = (props) => {
     const chat = [
         {
             username: "Ola",
@@ -18,16 +18,14 @@ export const Chat = () => {
         },
     ]
 
-    const sendMessage = () => {
-
-    }
+    
 
     return (
         <div className="chat-container">
             <h3>Чат</h3>
             <div className='chat-block'>
-                <ChatWindow chat={chat}/>
-                <ChatInput sendMessage={sendMessage} />
+                <ChatWindow chat={props.chat}/>
+                <ChatInput sendMessage={props.sendMessage} />
             </div>
         </div>
     );

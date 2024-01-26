@@ -8,7 +8,7 @@ using WebApi.Services.GameService;
 
 namespace WebApi.Hubs;
 
-[Authorize]
+
 public class GameHub : Hub<IGameHubClient>
 {
     private readonly IMediator _mediator;

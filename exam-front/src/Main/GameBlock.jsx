@@ -35,10 +35,6 @@ export const GameBlock = () => {
         
         }, [fetching])
 
-        
-
-        
-
     useEffect(() => {
             document.addEventListener('scroll', scrollHandler);
             return function(){
@@ -53,9 +49,6 @@ export const GameBlock = () => {
         }
 
     }
-
-
-
 
     return (
         <div className="game-section">
