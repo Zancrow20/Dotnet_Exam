@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Features.Game.Commands;
+using WebApi.Features.Game.Commands.CreateGame;
 using WebApi.Features.Game.Queries.GetAllGames;
 using WebApi.Features.Game.Queries.GetGame;
 using WebApi.Features.Game.Queries.GetLastPageNumber;
@@ -17,7 +18,7 @@ public static class GameEndpoints
             [FromQuery] int maxRating) =>
         {
             var userName = context.User.Identity!.Name;
-            var command = new GameCommand() { MaxRating = maxRating, Owner = userName!};
+            var command = new CreateGameCommand() { MaxRating = maxRating, Owner = userName!};
             var result = await mediator.Send(command);
             return result.Match(Results.Ok, Results.BadRequest);
         });

@@ -4,20 +4,20 @@ using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace WebApi.Features.Game.Commands;
+namespace WebApi.Features.Game.Commands.CreateGame;
 
-public class GameCommandHandler : IRequestHandler<GameCommand, Result<GameDto, string>>
+public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Result<GameDto, string>>
 {
     private readonly UserManager<Domain.Entities.User> _userManager;
     private readonly AppDbContext _dbContext;
 
-    public GameCommandHandler(UserManager<Domain.Entities.User> userManager, AppDbContext dbContext)
+    public CreateGameCommandHandler(UserManager<Domain.Entities.User> userManager, AppDbContext dbContext)
     {
         _userManager = userManager;
         _dbContext = dbContext;
     }
 
-    public async Task<Result<GameDto, string>> Handle(GameCommand request, CancellationToken cancellationToken)
+    public async Task<Result<GameDto, string>> Handle(CreateGameCommand request, CancellationToken cancellationToken)
     {
         var owner = await _userManager.FindByNameAsync(request.Owner);
         if (owner == null)

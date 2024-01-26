@@ -15,6 +15,7 @@ builder.Configuration.GetSection(MongoDbConfig.MongoDb).Bind(mongoConfig);
 builder.Configuration.GetSection(RabbitMqConfig.RabbitMqConfigString).Bind(rabbitMqConfig);
 
 builder.Services.AddHostedService<DbContextMigration>();
+builder.Services.AddHostedService<DeleteOldGames>();
 builder.Configuration.AddEnvironmentVariables();
 
 builder.Services
@@ -23,7 +24,6 @@ builder.Services
     .AddJWTAuthorization(config)
     .AddMediatr()
     .AddMongo(mongoConfig)
-    .AddApplicationServices()
     .AddMassTransitAndRabbitMq(rabbitMqConfig)
     .AddSwagger()
     .AddCors(options => options.AddPolicy(MyPolicy, pb 
