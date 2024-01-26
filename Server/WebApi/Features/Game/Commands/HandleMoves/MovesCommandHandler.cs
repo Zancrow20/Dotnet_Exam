@@ -29,7 +29,7 @@ public class MovesCommandHandler : IRequestHandler<MovesCommand, GameResult>
         var firstUserMove = request.UserMove1.Figure;
         var secondUserMove = request.UserMove2.Figure;
         var firstUser = await _userManager.FindByNameAsync(request.UserMove1.Username);
-        var secondUser = await _userManager.FindByNameAsync(request.UserMove1.Username);
+        var secondUser = await _userManager.FindByNameAsync(request.UserMove2.Username);
 
         UserMove winner = null;
         UserMove loser = null;

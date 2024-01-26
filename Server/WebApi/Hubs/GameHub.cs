@@ -85,15 +85,22 @@ public class GameHub : Hub<IGameHubClient>
     public async Task MakeMove(string gameId, Figure figure)
     {
         var username = Context.User!.Identity!.Name;
-        if (!_store.UsersMove.TryGetValue(gameId, out var anotherUserMove))
-        {
-            _store.UsersMove.AddOrUpdate(gameId, new UserMove(username, figure),
-                (_, _) => new UserMove(username, figure));
+        _store.UsersMove.AddOrUpdate(gameId, new List<UserMove>()
+            {
+                new (username, figure)
+            },
+            (_, list) =>
+            {
+                list.Add(new UserMove(username, figure));
+                return list;
+            });
+        
+        if(_store.UsersMove[gameId].Count != 2)
             return;
-        }
+        
         
         var userMove = new UserMove(username,  figure);
-        
+        var anotherUserMove = _store.UsersMove[gameId].First(x => x.Username != username);
         var handleMoveCommand = new MovesCommand()
         {
             GameId = gameId,
