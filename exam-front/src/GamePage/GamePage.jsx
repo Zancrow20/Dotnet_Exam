@@ -101,13 +101,23 @@ export const GamePage = () => {
             console.log(finishDto);
             setFinishMessage(finishDto.message);
             setResultString(`${finishDto.winnerName}: ${getSimbol(finishDto.winnerFigure)} vs ${finishDto.loserName}: ${getSimbol(finishDto.loserFigure)}`)
+
+            setTimeout(resetGame, 5000);
+            
           })
         })
         .catch(e => console.log('Connection failed: ', e));
     }
   }, [connection]);
 
-
+  const resetGame = async () => {
+    simb.current = 10;
+    setSimbol(10);
+    setGameState(0);
+    setFinishMessage("");
+    setResultString("");
+    connection.send('RestartGame', searchParams.get("gameId"));
+  }
 
 
   const enterToGame = async () => {
