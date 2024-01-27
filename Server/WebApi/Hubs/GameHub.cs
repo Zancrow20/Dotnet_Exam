@@ -177,16 +177,19 @@ public class GameHub : Hub<IGameHubClient>
         if (gameGroup != null)
         {
             var username = Context.User?.Identity?.Name!;
+            var gameId = gameGroup.Split("_")[0];
             var userLeaveCommand = new LeaveGameCommand()
             {
-                GameId = gameGroup.Split("_")[0],
+                GameId = gameId,
                 Username = username
             };
             await _mediator.Send(userLeaveCommand);
+            
+            var changeGameStatusCommand = new ChangeGameStatusCommand(){GameId = gameId, Status = Status.New};
+            await _mediator.Send(changeGameStatusCommand);
+            _store.GameConnections[gameGroup].Remove(username);
         }
 
-        _store.GameConnections[gameGroup]
-            .Remove(Context.ConnectionId);
         _store.UserGroupsConnections.Remove(Context.ConnectionId, out _);
     }
 }
