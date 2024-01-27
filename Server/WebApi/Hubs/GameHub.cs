@@ -17,11 +17,14 @@ public class GameHub : Hub<IGameHubClient>
 {
     private readonly IMediator _mediator;
     private readonly Store _store;
+    private static readonly object _locker = new();
+    private readonly ILogger<GameHub> _logger;
     
-    public GameHub(IMediator mediator, Store store)
+    public GameHub(IMediator mediator, Store store, ILogger<GameHub> logger)
     {
         _mediator = mediator;
         _store = store;
+        _logger = logger;
     }
 
     public async Task JoinGame(string gameId)
@@ -87,15 +90,16 @@ public class GameHub : Hub<IGameHubClient>
     {
         var username = Context.User!.Identity!.Name;
         
-        _store.UsersMove.AddOrUpdate(gameId, new HashSet<UserMove>()
-            {
-                new (username, figure)
-            },
-            (_, set) =>
-            {
-                set.Add(new UserMove(username, figure));
-                return set;
-            });
+        lock(_locker)
+            _store.UsersMove.AddOrUpdate(gameId, new HashSet<UserMove>()
+                {
+                    new (username, figure)
+                },
+                (_, set) =>
+                {
+                    set.Add(new UserMove(username, figure));
+                    return set;
+                });
         
         if(_store.UsersMove[gameId].Count != 2)
             return;
@@ -110,16 +114,17 @@ public class GameHub : Hub<IGameHubClient>
         };
         var gameResult = await _mediator.Send(handleMoveCommand);
         
-        FinishGameDto finishDto;
-        finishDto = gameResult.Winner == null ? new FinishGameDto() {WinnerFigure = figure, Message = gameResult.Message} 
-            : new FinishGameDto()
-            {
-                WinnerName = gameResult.Winner.Username,
-                WinnerFigure = gameResult.Winner.Figure,
-                LoserName = gameResult.Loser.Username,
-                LoserFigure = gameResult.Loser.Figure,
-                Message = gameResult.Message
-            };
+        _logger.LogInformation("Message: {GameMessage}", gameResult.Message);
+        
+        FinishGameDto finishDto = new()
+        {
+            WinnerName = gameResult.Winner.Username,
+            WinnerFigure = gameResult.Winner.Figure,
+            LoserName = gameResult.Loser.Username,
+            LoserFigure = gameResult.Loser.Figure,
+            Message = gameResult.Message,
+            IsDraw = gameResult.IsDraw
+        };
             
         var changeGameStatusCommand = new ChangeGameStatusCommand(){GameId = gameId, Status = Status.Finished};
         await _mediator.Send(changeGameStatusCommand);

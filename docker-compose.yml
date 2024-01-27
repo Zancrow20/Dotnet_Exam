@@ -54,7 +54,7 @@ services:
       MondoDb__CollectionName: Rating
       RabbitMqConfig__Username : rmuser
       RabbitMqConfig__Password : rmpassword
-      RabbitMqConfig__Hostname : amqp://rabbitmq:5672
+      RabbitMqConfig__Host : amqp://rabbitmq:5672
       
   exam-front:
     image: exam-front

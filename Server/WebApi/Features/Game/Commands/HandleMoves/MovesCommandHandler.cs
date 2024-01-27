@@ -31,8 +31,9 @@ public class MovesCommandHandler : IRequestHandler<MovesCommand, GameResult>
         var firstUser = await _userManager.FindByNameAsync(request.UserMove1.Username);
         var secondUser = await _userManager.FindByNameAsync(request.UserMove2.Username);
 
-        UserMove winner = null;
-        UserMove loser = null;
+        UserMove winner;
+        UserMove loser;
+        var isDraw = false;
         var chatMessage = new ChatMessage()
         {
             From = "Server",
@@ -46,6 +47,9 @@ public class MovesCommandHandler : IRequestHandler<MovesCommand, GameResult>
                 cancellationToken);
             chatMessage.Message = $"Ничья между игроками {firstUser.UserName}:{firstUserMove.ToString()} " +
                                   $"и {secondUser.UserName}:{secondUserMove.ToString()}";
+            winner = request.UserMove1;
+            loser = request.UserMove2;
+            isDraw = true;
         }
         else if (firstUserMove == Figure.Scissors && secondUserMove == Figure.Paper ||
                  firstUserMove == Figure.Rock && secondUserMove == Figure.Scissors ||
@@ -70,6 +74,6 @@ public class MovesCommandHandler : IRequestHandler<MovesCommand, GameResult>
 
         _dbContext.ChatMessages.Add(chatMessage);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        return new GameResult(winner, loser, chatMessage.Message);
+        return new GameResult(winner, loser, chatMessage.Message, isDraw);
     }
 }
