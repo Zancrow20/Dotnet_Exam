@@ -1,0 +1,105 @@
+.greeting{
+    color: #212169;
+}
+.active-btns{
+    display: flex;
+    justify-content: space-around;
+}
+.rating-btn{
+    background: #4B539A;
+    border: 2px solid #212169;
+    border-radius: 12px;
+    margin: 10px 0;
+    font-size: 16px;
+    padding: 8px 15px;
+    letter-spacing: 2px;
+    font-weight: 600;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+}
+
+.create-game-btn{
+    background: #4B539A;
+    border: 2px solid #212169;
+    border-radius: 12px;
+    margin: 10px 0;
+    font-size: 16px;
+    padding: 8px 15px;
+    letter-spacing: 2px;
+    font-weight: 600;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.game-block{
+    display: flex;
+    border: 2px solid #4B539A;
+    margin: 10px 0;
+    padding: 10px 10px;
+    border-radius: 12px;
+    align-items: center;
+}
+.gameId-part{
+    width: 33%;
+    text-align: center;
+}
+.owner-part{
+    width: 17%;
+    text-align: center;
+}
+.date-part{
+    width: 15%;
+    text-align: center;
+}
+.rating-part{
+    width: 9%;
+    text-align: center;
+}
+.status-part{
+    width: 10%;
+    text-align: center;
+}
+.enter-part{
+    width: 16%;
+}
+.enter-button{
+    text-align: center;
+    background: #4B539A;
+    border: 2px solid #212169;
+    border-radius: 12px;
+    padding: 5px;
+    width: 90%;
+    letter-spacing: 2px;
+    font-weight: 600;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.enter-button:hover{
+    background: none;
+}
+.games-header{
+    display: flex;
+    font-weight: 600;
+}
+.gameId-header{
+    width: 33%;
+    text-align: center;
+}
+.owner-header{
+    width: 17%;
+    text-align: center;
+}
+.date-header{
+    width: 15%;
+    text-align: center;
+}
+.rating-header{
+    width: 9%;
+    text-align: center;
+}
+.status-header{
+    width: 10%;
+    text-align: center;
+}
+.enter-header{
+    width: 16%;
+    text-align: center;
+}
