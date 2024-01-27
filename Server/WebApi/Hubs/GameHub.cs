@@ -9,6 +9,7 @@ using WebApi.Features.Game.Commands.HandleMoves;
 using WebApi.Features.Game.Commands.JoinGame;
 using WebApi.Features.Game.Commands.LeaveGame;
 using WebApi.Features.Game.Queries.CheckUserRating;
+using WebApi.Features.Game.Queries.GetGame;
 
 namespace WebApi.Hubs;
 
@@ -37,6 +38,16 @@ public class GameHub : Hub<IGameHubClient>
         if(!canJoin)
         {
             await Clients.Client(Context.ConnectionId).JoinRefused("Рейтинг выше максимального!");
+            return;
+        }
+        
+        var query = new GameQuery() {GameId = gameId};
+        var gameRes = await _mediator.Send(query);
+        var gameStatus = gameRes.Match(g => g.Status, _ => Status.Started);
+
+        if(gameStatus == Status.Finished)
+        {
+            await Clients.Client(Context.ConnectionId).JoinRefused("Игра уже завершена!");
             return;
         }
 
@@ -75,11 +86,11 @@ public class GameHub : Hub<IGameHubClient>
             await _mediator.Send(changeGameStatusCommand);          
             await Clients.Client(Context.ConnectionId).SuccessJoin();
 
-            await Clients.Groups(game).StartGame();
+            await Clients.Group(game).StartGame();
 
             await Task.Delay(TimeSpan.FromSeconds(10));
             
-            await Clients.Groups(game).AskFigure();
+            await Clients.Group(game).AskFigure();
             return;
         }
         await Clients.Client(Context.ConnectionId).SuccessJoin();
@@ -131,7 +142,6 @@ public class GameHub : Hub<IGameHubClient>
         var game = $"{gameId}_game";
         await Clients.Group(gameId).ReceiveMessage(new MessageDto("Server", gameResult.Message));
         await Clients.Group(game).FinishGame(finishDto);
-        Console.WriteLine(new MessageDto("Server", gameResult.Message));
         _store.UsersMove.Remove(gameId, out _);
     }
     
@@ -146,11 +156,22 @@ public class GameHub : Hub<IGameHubClient>
 
     public async Task RestartGame(string gameId)
     {
+        var query = new GameQuery() {GameId = gameId};
+        var gameRes = await _mediator.Send(query);
+        var gameStatus = gameRes.Match(g => g.Status, _ => Status.Started);
+
+        var game = $"{gameId}_game";
+        if(gameStatus == Status.New || _store.GameConnections[game].Count() != 2)
+            return;
+        
         var changeGameStatusCommand = new ChangeGameStatusCommand(){GameId = gameId, Status = Status.Started};
         await _mediator.Send(changeGameStatusCommand);
         
-        var game = $"{gameId}_game";
-        await Clients.Groups(game).StartGame();
+        await Clients.Client(Context.ConnectionId).StartGame();
+
+        await Task.Delay(TimeSpan.FromSeconds(10));
+            
+        await Clients.Client(Context.ConnectionId).AskFigure();
     }
 
     public async Task SendMessage(string gameId,string message)
@@ -177,16 +198,19 @@ public class GameHub : Hub<IGameHubClient>
         if (gameGroup != null)
         {
             var username = Context.User?.Identity?.Name!;
+            var gameId = gameGroup.Split("_")[0];
             var userLeaveCommand = new LeaveGameCommand()
             {
-                GameId = gameGroup.Split("_")[0],
+                GameId = gameId,
                 Username = username
             };
             await _mediator.Send(userLeaveCommand);
+            
+            var changeGameStatusCommand = new ChangeGameStatusCommand(){GameId = gameId, Status = Status.New};
+            await _mediator.Send(changeGameStatusCommand);
+            _store.GameConnections[gameGroup].Remove(username);
         }
 
-        _store.GameConnections[gameGroup]
-            .Remove(Context.ConnectionId);
         _store.UserGroupsConnections.Remove(Context.ConnectionId, out _);
     }
 }
