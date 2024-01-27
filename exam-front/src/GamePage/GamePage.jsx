@@ -148,11 +148,12 @@ export const GamePage = () => {
     if (connection._connectionStarted) {
       try {
         console.log(simb.current)
-        if (simb.current === 10) {
+        let current = simb.current
+        if (current === 10) {
           await connection.send('MakeMove', searchParams.get("gameId"), Math.floor(Math.random() * 3));
         }
         else {
-          await connection.send('MakeMove', searchParams.get("gameId"), simbol.current);
+          await connection.send('MakeMove', searchParams.get("gameId"), current);
         }
 
       }
