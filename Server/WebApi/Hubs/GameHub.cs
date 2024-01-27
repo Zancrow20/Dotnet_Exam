@@ -7,6 +7,7 @@ using WebApi.Features.ChatHistory.Commands;
 using WebApi.Features.Game.Commands.ChangeGameStatus;
 using WebApi.Features.Game.Commands.HandleMoves;
 using WebApi.Features.Game.Commands.JoinGame;
+using WebApi.Features.Game.Commands.LeaveGame;
 using WebApi.Features.Game.Queries.CheckUserRating;
 
 namespace WebApi.Hubs;
@@ -85,6 +86,7 @@ public class GameHub : Hub<IGameHubClient>
     public async Task MakeMove(string gameId, Figure figure)
     {
         var username = Context.User!.Identity!.Name;
+        await Task.Delay(TimeSpan.FromSeconds(Random.Shared.Next(0, 4)));
         _store.UsersMove.AddOrUpdate(gameId, new List<UserMove>()
             {
                 new (username, figure)
@@ -123,8 +125,9 @@ public class GameHub : Hub<IGameHubClient>
         var changeGameStatusCommand = new ChangeGameStatusCommand(){GameId = gameId, Status = Status.Finished};
         await _mediator.Send(changeGameStatusCommand);
         var game = $"{gameId}_game";
-        await Clients.Group(game).FinishGame(finishDto);
         await Clients.Group(gameId).ReceiveMessage(new MessageDto("Server", gameResult.Message));
+        await Clients.Group(game).FinishGame(finishDto);
+        Console.WriteLine(new MessageDto("Server", gameResult.Message));
         _store.UsersMove.Remove(gameId, out _);
     }
     
@@ -139,7 +142,11 @@ public class GameHub : Hub<IGameHubClient>
 
     public async Task RestartGame(string gameId)
     {
+        var changeGameStatusCommand = new ChangeGameStatusCommand(){GameId = gameId, Status = Status.Started};
+        await _mediator.Send(changeGameStatusCommand);
         
+        var game = $"{gameId}_game";
+        await Clients.Groups(game).StartGame();
     }
 
     public async Task SendMessage(string gameId,string message)
@@ -166,12 +173,12 @@ public class GameHub : Hub<IGameHubClient>
         if (gameGroup != null)
         {
             var username = Context.User?.Identity?.Name!;
-            var userJoinCommand = new JoinGameCommand()
+            var userLeaveCommand = new LeaveGameCommand()
             {
                 GameId = gameGroup.Split("_")[0],
                 Username = username
             };
-            await _mediator.Send(userJoinCommand);
+            await _mediator.Send(userLeaveCommand);
         }
 
         _store.GameConnections[gameGroup]
