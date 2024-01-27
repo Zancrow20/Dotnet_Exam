@@ -23,7 +23,7 @@ public class GetChatHistoryQueryHandler : IRequestHandler<GetChatHistoryQuery, R
             return "Игры не существует!";
         var chatHistory = await _dbContext.ChatMessages
             .Where(m => m.GameId == request.GameId)
-            .Select(m => new ChatMessageDto() {From = m.From, Message = m.Message, To = m.To})
+            .Select(m => new ChatMessageDto() {Username = m.From, Message = m.Message, To = m.To})
             .ToListAsync(cancellationToken: cancellationToken);
         return new ChatHistoryDto(){ChatMessageDtos = chatHistory};
     }

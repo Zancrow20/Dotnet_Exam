@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using DataAccess;
+using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,19 +18,28 @@ public class GetAllGamesQueryHandler : IRequestHandler<GetAllGamesQuery, Result<
     public async Task<Result<GamesDto, string>> Handle(GetAllGamesQuery request, CancellationToken cancellationToken)
     {
         var games = await _dbContext.Games
-            .OrderBy(g => g.Status)
-            .ThenByDescending(g => g.Date)
+            .Select(g => new
+            {
+                Game = g,
+                SortKey = (g.Status == Status.New ? 1 : 0) +
+                          (g.Status == Status.Started ? 2 : 0) + 
+                          (g.Status == Status.Finished ? 3 : 0)
+                    
+            })
+            .OrderBy(g => g.SortKey)
+            .ThenByDescending(g => g.Game.Date)
             .Skip((request.PageNumber - 1) * request.PageSize)
             .Take(request.PageSize)
-            .Select(game => new GameDto()
+            .Select(g => new GameDto()
             {
-                GameId = game.GameId,
-                Owner = game.Owner,
-                OwnerName = game.OwnerName,
-                Date = game.Date,
-                MaxRating = game.MaxRating,
-                Status = game.Status
-            }).ToListAsync(cancellationToken: cancellationToken);
+                GameId = g.Game.GameId,
+                Owner = g.Game.Owner,
+                OwnerName = g.Game.OwnerName,
+                Date = g.Game.Date,
+                MaxRating = g.Game.MaxRating,
+                Status = g.Game.Status
+            })
+            .ToListAsync(cancellationToken: cancellationToken);
         return new GamesDto() {Games = games};
     }
 }

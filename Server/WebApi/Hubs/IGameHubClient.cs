@@ -21,4 +21,4 @@ public class FinishGameDto
     public string Message { get; set; }
 }
 
-public record MessageDto(string Username, string Message);
+public record MessageDto(string From, string Message);
