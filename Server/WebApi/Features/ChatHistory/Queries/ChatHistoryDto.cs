@@ -7,9 +7,9 @@ public class ChatHistoryDto
 
 public class ChatMessageDto
 {
-    public string? From { get; set; }
+    public string? Username { get; set; }
     public string? To { get; set; }
     public string Message { get; set; }
 
-    public bool IsSystemMessage => From == "Server" && To == null;
+    public bool IsSystemMessage => Username == "Server" && To == null;
 }

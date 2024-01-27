@@ -9,7 +9,13 @@ public class ChangeGameStatusCommandHandler : IRequestHandler<ChangeGameStatusCo
 {
     private readonly AppDbContext _dbContext;
     private readonly UserManager<Domain.Entities.User> _userManager;
-    
+
+    public ChangeGameStatusCommandHandler(AppDbContext dbContext, UserManager<Domain.Entities.User> userManager)
+    {
+        _dbContext = dbContext;
+        _userManager = userManager;
+    }
+
     public async Task Handle(ChangeGameStatusCommand request, CancellationToken cancellationToken)
     {
         var game = await _dbContext.Games

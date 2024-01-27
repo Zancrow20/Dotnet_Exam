@@ -20,7 +20,7 @@ public class RatingQueryHandler : IRequestHandler<RatingQuery, Result<RatingDto,
     public async Task<Result<RatingDto, string>> Handle(RatingQuery request, CancellationToken cancellationToken)
     {
         var rating = (await _ratingRepository.GetAllRatingsAsync(cancellationToken))
-            .OrderBy(r => r.Score)
+            .OrderByDescending(r => r.Score)
             .Skip((request.PageNumber - 1) * request.PageSize)
             .Take(request.PageSize);
 

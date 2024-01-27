@@ -7,6 +7,7 @@ using WebApi.Features.ChatHistory.Commands;
 using WebApi.Features.Game.Commands.ChangeGameStatus;
 using WebApi.Features.Game.Commands.HandleMoves;
 using WebApi.Features.Game.Commands.JoinGame;
+using WebApi.Features.Game.Commands.LeaveGame;
 using WebApi.Features.Game.Queries.CheckUserRating;
 
 namespace WebApi.Hubs;
@@ -16,11 +17,14 @@ public class GameHub : Hub<IGameHubClient>
 {
     private readonly IMediator _mediator;
     private readonly Store _store;
+    private static readonly object _locker = new();
+    private readonly ILogger<GameHub> _logger;
     
-    public GameHub(IMediator mediator, Store store)
+    public GameHub(IMediator mediator, Store store, ILogger<GameHub> logger)
     {
         _mediator = mediator;
         _store = store;
+        _logger = logger;
     }
 
     public async Task JoinGame(string gameId)
@@ -85,15 +89,23 @@ public class GameHub : Hub<IGameHubClient>
     public async Task MakeMove(string gameId, Figure figure)
     {
         var username = Context.User!.Identity!.Name;
-        if (!_store.UsersMove.TryGetValue(gameId, out var anotherUserMove))
-        {
-            _store.UsersMove.AddOrUpdate(gameId, new UserMove(username, figure),
-                (_, _) => new UserMove(username, figure));
+        
+        lock(_locker)
+            _store.UsersMove.AddOrUpdate(gameId, new HashSet<UserMove>()
+                {
+                    new (username, figure)
+                },
+                (_, set) =>
+                {
+                    set.Add(new UserMove(username, figure));
+                    return set;
+                });
+        
+        if(_store.UsersMove[gameId].Count != 2)
             return;
-        }
         
         var userMove = new UserMove(username,  figure);
-        
+        var anotherUserMove = _store.UsersMove[gameId].First(x => x.Username != username);
         var handleMoveCommand = new MovesCommand()
         {
             GameId = gameId,
@@ -102,20 +114,24 @@ public class GameHub : Hub<IGameHubClient>
         };
         var gameResult = await _mediator.Send(handleMoveCommand);
         
-        FinishGameDto finishDto;
-        finishDto = gameResult.Winner == null ? new FinishGameDto() {WinnerFigure = figure, Message = gameResult.Message} 
-            : new FinishGameDto()
-            {
-                WinnerName = gameResult.Winner.Username,
-                WinnerFigure = gameResult.Winner.Figure,
-                LoserName = gameResult.Loser.Username,
-                LoserFigure = gameResult.Loser.Figure,
-                Message = gameResult.Message
-            };
+        _logger.LogInformation("Message: {GameMessage}", gameResult.Message);
+        
+        FinishGameDto finishDto = new()
+        {
+            WinnerName = gameResult.Winner.Username,
+            WinnerFigure = gameResult.Winner.Figure,
+            LoserName = gameResult.Loser.Username,
+            LoserFigure = gameResult.Loser.Figure,
+            Message = gameResult.Message,
+            IsDraw = gameResult.IsDraw
+        };
             
         var changeGameStatusCommand = new ChangeGameStatusCommand(){GameId = gameId, Status = Status.Finished};
         await _mediator.Send(changeGameStatusCommand);
-        await Clients.Group(gameId).FinishGame(finishDto);
+        var game = $"{gameId}_game";
+        await Clients.Group(gameId).ReceiveMessage(new MessageDto("Server", gameResult.Message));
+        await Clients.Group(game).FinishGame(finishDto);
+        Console.WriteLine(new MessageDto("Server", gameResult.Message));
         _store.UsersMove.Remove(gameId, out _);
     }
     
@@ -130,7 +146,11 @@ public class GameHub : Hub<IGameHubClient>
 
     public async Task RestartGame(string gameId)
     {
+        var changeGameStatusCommand = new ChangeGameStatusCommand(){GameId = gameId, Status = Status.Started};
+        await _mediator.Send(changeGameStatusCommand);
         
+        var game = $"{gameId}_game";
+        await Clients.Groups(game).StartGame();
     }
 
     public async Task SendMessage(string gameId,string message)
@@ -148,7 +168,7 @@ public class GameHub : Hub<IGameHubClient>
             return;
         
         var messageDto = new MessageDto(username!, message);
-        await Clients.OthersInGroup(gameId).ReceiveMessage(messageDto);
+        await Clients.Group(gameId).ReceiveMessage(messageDto);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -157,12 +177,12 @@ public class GameHub : Hub<IGameHubClient>
         if (gameGroup != null)
         {
             var username = Context.User?.Identity?.Name!;
-            var userJoinCommand = new JoinGameCommand()
+            var userLeaveCommand = new LeaveGameCommand()
             {
                 GameId = gameGroup.Split("_")[0],
                 Username = username
             };
-            await _mediator.Send(userJoinCommand);
+            await _mediator.Send(userLeaveCommand);
         }
 
         _store.GameConnections[gameGroup]

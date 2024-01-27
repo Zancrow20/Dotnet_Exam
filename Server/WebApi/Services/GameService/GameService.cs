@@ -86,7 +86,7 @@ public class GameService : IGameService
 
         _dbContext.ChatMessages.Add(chatMessage);
         await _dbContext.SaveChangesAsync();
-        return new GameResult(winner, loser, chatMessage.Message);
+        return new GameResult(winner, loser, chatMessage.Message, false);
     }
 
     public async Task AddToGame(string username, string gameId)

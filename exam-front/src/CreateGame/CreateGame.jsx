@@ -47,7 +47,7 @@ export const CreateGame = () => {
                     <div className='create-game-block'>
                         <h3>Создание игры</h3>
                         <form className="create-game-form" onSubmit={handleSubmitForm} >
-                            <span>Минимальный рейтинг</span>
+                            <span>Максимальный рейтинг</span>
                             <input
                                 type="number"
                                 value={maxRating}

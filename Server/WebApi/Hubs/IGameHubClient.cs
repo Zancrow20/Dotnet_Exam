@@ -19,6 +19,8 @@ public class FinishGameDto
     public Figure WinnerFigure { get; set; }
     public Figure LoserFigure { get; set; }
     public string Message { get; set; }
+    
+    public bool IsDraw { get; set; }
 }
 
 public record MessageDto(string Username, string Message);

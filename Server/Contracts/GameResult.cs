@@ -1,3 +1,3 @@
 ﻿namespace Contracts;
 
-public record GameResult(UserMove? Winner, UserMove? Loser, string Message);
+public record GameResult(UserMove? Winner, UserMove? Loser, string Message, bool IsDraw);

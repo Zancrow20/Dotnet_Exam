@@ -11,7 +11,14 @@ public class CheckUserRatingQueryHandler : IRequestHandler<CheckUserRatingQuery,
     private readonly AppDbContext _dbContext;
     private readonly IRatingRepository _ratingRepository;
     private readonly UserManager<Domain.Entities.User> _userManager;
-    
+
+    public CheckUserRatingQueryHandler(AppDbContext dbContext, IRatingRepository ratingRepository, UserManager<Domain.Entities.User> userManager)
+    {
+        _dbContext = dbContext;
+        _ratingRepository = ratingRepository;
+        _userManager = userManager;
+    }
+
     public async Task<bool> Handle(CheckUserRatingQuery request, CancellationToken cancellationToken)
     {
         var gameRating = (await _dbContext.Games.FirstOrDefaultAsync(g => g.GameId == request.GameId,
