@@ -25,13 +25,14 @@ export const GamePage = () => {
   const [gameState, setGameState] = useState(0);
   const [finishMessage, setFinishMessage] = useState("")
   const [resultString, setResultString] = useState("")
+  const simb = useRef(10);
 
   latestChat.current = chat;
 
-  function updateHistory(){
+  function updateHistory() {
     webApiFetcher.get(`/chat/getHistory?gameId=${searchParams.get("gameId")}`)
-        .then(result => setChat(result.data.chatMessageDtos))
-        .catch(ex => console.log(ex));   
+      .then(result => setChat(result.data.chatMessageDtos))
+      .catch(ex => console.log(ex));
   }
 
   useEffect(() => {
@@ -67,7 +68,6 @@ export const GamePage = () => {
 
   useEffect(() => {
     if (connection) {
-      console.log(connection)
       connection.start()
         .then((result) => {
           console.log('Connected!');
@@ -83,32 +83,30 @@ export const GamePage = () => {
           });
 
           connection.on('ReceiveMessage', message => {
-            console.log("recieve")
             const updatedChat = [...latestChat.current];
             updatedChat.push(message);
             setChat(updatedChat);
           });
 
+          connection.on("AskFigure", () => {
+            console.log("отправка хода")
+            makeMove();
+            setGameState(2)
+          });
+
+        
           connection.on("JoinRefused", (message) => alert(message))
 
           connection.on("FinishGame", finishDto => {
             console.log(finishDto);
             setFinishMessage(finishDto.message);
-            setResultString(`${finishDto.winnerName}: ${getSimbol(finishDto.winnerFigure)} vs ${finishDto.loserName}: ${getSimbol(finishDto.loserFigure)}`)})
+            setResultString(`${finishDto.winnerName}: ${getSimbol(finishDto.winnerFigure)} vs ${finishDto.loserName}: ${getSimbol(finishDto.loserFigure)}`)
+          })
         })
         .catch(e => console.log('Connection failed: ', e));
     }
   }, [connection]);
 
-  useEffect(() => {
-    if (connection && connection._connectionStarted) {
-      connection.on("AskFigure", () => {
-        console.log(simbol)
-        makeMove();
-        setGameState(2)
-      })
-    }
-  }, [simbol, gameState])
 
 
 
@@ -134,7 +132,6 @@ export const GamePage = () => {
 
     if (connection._connectionStarted) {
       try {
-        console.log(chatMessage)
         await connection.send('SendMessage', searchParams.get("gameId"), message);
       }
       catch (e) {
@@ -150,13 +147,14 @@ export const GamePage = () => {
 
     if (connection._connectionStarted) {
       try {
-        if (simbol === 10){
+        console.log(simb.current)
+        if (simb.current === 10) {
           await connection.send('MakeMove', searchParams.get("gameId"), Math.floor(Math.random() * 3));
-        } 
-        else{
-          await connection.send('MakeMove', searchParams.get("gameId"), simbol);
         }
-          
+        else {
+          await connection.send('MakeMove', searchParams.get("gameId"), simbol.current);
+        }
+
       }
       catch (e) {
         console.log(e);
@@ -172,21 +170,21 @@ export const GamePage = () => {
       <>
         <div>
           {(!isPlayer && gameState === 0) && (<button onClick={enterToGame} className="enter-game-btn">Присоединиться</button>)}
-          {(gameState===0) && <span>Игра создана. Ожидание игроков.</span>}
+          {(gameState === 0) && <span>Игра создана. Ожидание игроков.</span>}
           {(gameState === 2) && <p>Игра завершена. {finishMessage}</p>}
           {(gameState === 2) && <p>{resultString}</p>}
-          {(gameState === 1) && <span>Идет игра. Игрокам нужно выбрать символ. На выбор дается 10 секунд</span> }
-          <br/>
+          {(gameState === 1) && <span>Идет игра. Игрокам нужно выбрать символ. На выбор дается 10 секунд</span>}
+          <br />
           {(gameState === 1 && isPlayer) && <span>Ваш символ: {getSimbol(simbol)}</span>}
-          
+
           <div className="btn-panel">
-            <button onClick={() => { setSimbol(0) }} className="rock-btn">
+            <button onClick={() => {setSimbol(0); simb.current = 0} } className="rock-btn">
               <img className="rock-btn-img" src={rock} alt="Камень" />
             </button>
-            <button onClick={() => { setSimbol(1) }} className="scissors-btn">
+            <button onClick={() => {setSimbol(1); simb.current = 1}} className="scissors-btn">
               <img className="scissors-btn-img" src={scissors} alt="Ножницы" />
             </button>
-            <button onClick={() => { setSimbol(2) }} className="paper-btn">
+            <button onClick={() => {setSimbol(2); simb.current = 2}} className="paper-btn">
               <img className="paper-btn-img" src={paper} alt="Бумага" />
             </button>
           </div>

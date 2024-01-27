@@ -1,6 +1,6 @@
 class Ports {
     //static WebApi = process.env.REACT_APP_WebApi;
-    static WebApi = 5177;
+    static WebApi = 8000;
   }
   
   export default Ports;
